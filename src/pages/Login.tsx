@@ -1,38 +1,43 @@
 import React, { useState } from 'react';
+import { loginUser } from '../api';
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonInput,
-  IonItem,
-  IonLabel,
-  IonButton,
-  IonText,
+  IonPage, IonHeader, IonToolbar, IonTitle,
+  IonContent, IonInput, IonItem, IonLabel, IonButton, IonText
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+
+interface JwtPayload {
+  sub: string;
+  roles: string[];
+  exp: number;
+}
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory();
 
-  const handleLogin = () => {
-    console.log('Login with:', username, password);
+  const handleLogin = async () => {
+    try {
+      const result = await loginUser({ username, password, deviceId: 'web-1' });
 
-    // 🔹 Dummy login logic — replace with API call
-    if (username === 'admin' && password === 'admin123') {
-      history.push('/admin'); // Redirect to Admin page
-    } else if (username === 'client' && password === 'client123') {
-      history.push('/client'); // Redirect to Client page
-    } else {
-      alert('Invalid credentials');
+      // Save tokens
+      localStorage.setItem('accessToken', result.accessToken);
+      localStorage.setItem('refreshToken', result.refreshToken);
+
+      // Decode role from JWT
+      const decoded: JwtPayload = jwtDecode(result.accessToken);
+      console.log('Decoded token:', decoded);
+
+      if (decoded.roles.includes('ROLE_ADMIN')) {
+        history.push('/admin');
+      } else {
+        history.push('/client');
+      }
+    } catch (err) {
+      alert('Login failed. Please try again.');
     }
-  };
-
-  const handleForgotPassword = () => {
-    alert('Redirect to Forgot Password page');
   };
 
   return (
@@ -65,7 +70,6 @@ const Login: React.FC = () => {
         </IonButton>
         <IonText
           color="primary"
-          onClick={handleForgotPassword}
           style={{ cursor: 'pointer', display: 'block', marginTop: '10px', textAlign: 'center' }}
         >
           Forgot Password?

@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
+import { registerUser } from '../api';
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonInput,
-  IonItem,
-  IonLabel,
-  IonButton,
-  IonSelect,
-  IonSelectOption
+  IonPage, IonHeader, IonToolbar, IonTitle,
+  IonContent, IonInput, IonItem, IonLabel, IonButton, IonSelect, IonSelectOption
 } from '@ionic/react';
 
 const Register: React.FC = () => {
@@ -19,16 +11,28 @@ const Register: React.FC = () => {
     lastName: '',
     email: '',
     mobile: '',
-    role: ''
+    role: '',
+    password: ''
   });
 
   const handleChange = (key: string, value: string) => {
     setForm({ ...form, [key]: value });
   };
 
-  const handleSignup = () => {
-    console.log('User registered:', form);
-    // Call your backend API here
+  const handleSignup = async () => {
+    try {
+      const result = await registerUser({
+        username: form.email,
+        password: form.password,
+        role: form.role,
+        deviceId: 'web-1',
+      });
+
+      console.log('Registered:', result);
+      alert('Registration successful! You can login now.');
+    } catch (err) {
+      alert('Registration failed. Try again.');
+    }
   };
 
   return (
@@ -65,6 +69,15 @@ const Register: React.FC = () => {
           />
         </IonItem>
         <IonItem>
+          <IonLabel position="stacked">Password</IonLabel>
+          <IonInput
+            type="password"
+            value={form.password}
+            placeholder="Enter Password"
+            onIonChange={(e) => handleChange('password', e.detail.value!)}
+          />
+        </IonItem>
+        <IonItem>
           <IonLabel position="stacked">Mobile Number</IonLabel>
           <IonInput
             type="tel"
@@ -80,9 +93,8 @@ const Register: React.FC = () => {
             value={form.role}
             onIonChange={(e) => handleChange('role', e.detail.value)}
           >
-            <IonSelectOption value="admin">Admin</IonSelectOption>
-            <IonSelectOption value="user">User</IonSelectOption>
-            <IonSelectOption value="guest">Guest</IonSelectOption>
+            <IonSelectOption value="ROLE_ADMIN">Admin</IonSelectOption>
+            <IonSelectOption value="ROLE_USER">User</IonSelectOption>
           </IonSelect>
         </IonItem>
         <IonButton expand="block" className="ion-margin-top" onClick={handleSignup}>
