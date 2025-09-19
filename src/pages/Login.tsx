@@ -11,14 +11,24 @@ import {
   IonButton,
   IonText,
 } from '@ionic/react';
+import { useHistory } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const history = useHistory();
 
   const handleLogin = () => {
     console.log('Login with:', username, password);
-    // Add your login API call here
+
+    // 🔹 Dummy login logic — replace with API call
+    if (username === 'admin' && password === 'admin123') {
+      history.push('/admin'); // Redirect to Admin page
+    } else if (username === 'client' && password === 'client123') {
+      history.push('/client'); // Redirect to Client page
+    } else {
+      alert('Invalid credentials');
+    }
   };
 
   const handleForgotPassword = () => {
@@ -53,10 +63,13 @@ const Login: React.FC = () => {
         <IonButton expand="block" className="ion-margin-top" onClick={handleLogin}>
           Login
         </IonButton>
-        <IonText color="primary" onClick={handleForgotPassword} style={{ cursor: 'pointer', display: 'block', marginTop: '10px', textAlign: 'center' }}>
+        <IonText
+          color="primary"
+          onClick={handleForgotPassword}
+          style={{ cursor: 'pointer', display: 'block', marginTop: '10px', textAlign: 'center' }}
+        >
           Forgot Password?
         </IonText>
-        {/* 🔹 New Registration Button */}
         <IonButton
           expand="block"
           color="secondary"

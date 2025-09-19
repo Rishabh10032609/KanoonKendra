@@ -1,6 +1,8 @@
 import { Redirect, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Admin from './pages/Admin';
+import Client from './pages/Client';
 import {
   IonApp,
   IonIcon,
@@ -73,6 +75,12 @@ const App: React.FC = () => (
   <Route exact path="/">
     <Redirect to="/login" /> {/* By default go to login */}
   </Route>
+  <Route exact path="/admin">
+  <Admin />
+</Route>
+<Route exact path="/client">
+  <Client />
+</Route>
           {/* <Route exact path="/">
             <Redirect to="/tab1" />
           </Route> */}
